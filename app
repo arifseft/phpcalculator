@@ -29,4 +29,5 @@ try {
 
     $app->run(new ArgvInput(), new ConsoleOutput());
 } catch (Throwable $e) {
+	error_log($e->getMessage());
 }
