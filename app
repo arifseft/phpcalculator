@@ -1,11 +1,15 @@
 #!/usr/bin/env php
 <?php
 
-use Illuminate\Console\Application;
-use Illuminate\Container\Container;
-use Illuminate\Events\Dispatcher;
-use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Output\ConsoleOutput;
+use Illuminate\{
+	Console\Application,
+	Container\Container,
+	Events\Dispatcher
+};
+use Symfony\Component\Console\{
+	Input\ArgvInput,
+	Output\ConsoleOutput
+};
 
 try {
     require_once __DIR__.'/vendor/autoload.php';

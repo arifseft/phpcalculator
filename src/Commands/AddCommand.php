@@ -26,6 +26,7 @@ class AddCommand extends Command
             $this->getCommandPassiveVerb()
         );
         $this->description = sprintf('%s all given Numbers', ucfirst($commandVerb));
+        parent::__construct();
     }
 
     protected function getCommandVerb(): string
