@@ -16,7 +16,7 @@ try {
 
     $container = new Container();
     $dispatcher = new Dispatcher();
-    $app = new Application($container, $dispatcher, '0.3');
+    $app = new Application($container, $dispatcher, '0.4');
     $app->setName('Calculator');
 
     $commands = require_once __DIR__.'/commands.php';

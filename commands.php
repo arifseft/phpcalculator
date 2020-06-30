@@ -6,4 +6,5 @@ return [
     Commands\AddCommand::class,
     Commands\SubtractCommand::class,
     Commands\MultiplyCommand::class,
+    Commands\DivideCommand::class,
 ];
