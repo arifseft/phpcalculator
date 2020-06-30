@@ -1,18 +1,22 @@
 #!/usr/bin/env php
 <?php
 
-use Illuminate\Console\Application;
-use Illuminate\Container\Container;
-use Illuminate\Events\Dispatcher;
-use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Output\ConsoleOutput;
+use Illuminate\{
+	Console\Application,
+	Container\Container,
+	Events\Dispatcher
+};
+use Symfony\Component\Console\{
+	Input\ArgvInput,
+	Output\ConsoleOutput
+};
 
 try {
     require_once __DIR__.'/vendor/autoload.php';
 
     $container = new Container();
     $dispatcher = new Dispatcher();
-    $app = new Application($container, $dispatcher, '0.1');
+    $app = new Application($container, $dispatcher, '0.5');
     $app->setName('Calculator');
     $appConfig = require_once __DIR__.'/config/app.php';
     $providers = $appConfig['providers'];
@@ -35,4 +39,5 @@ try {
 
     $app->run(new ArgvInput(), new ConsoleOutput());
 } catch (Throwable $e) {
+	error_log($e->getMessage());
 }

@@ -1,5 +1,11 @@
 <?php
 
+use Jakmall\Recruitment\Calculator\Commands;
+
 return [
-    // TODO : Add list of commands here
+    Commands\AddCommand::class,
+    Commands\SubtractCommand::class,
+    Commands\MultiplyCommand::class,
+    Commands\DivideCommand::class,
+    Commands\PowCommand::class,
 ];
