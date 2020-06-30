@@ -48,16 +48,11 @@ class AddCommand extends Command
 
     public function handle(): void
     {
-        $numbers = $this->getInput();
+        $numbers = $this->argument("numbers");
         $sum = new Sum($numbers);
         $description = $this->operation->generateCalculationDescription($sum);
         $result = $this->operation->calculateAll($sum);
 
         $this->comment(sprintf('%s = %s', $description, $result));
-    }
-
-    protected function getInput(): array
-    {
-        return $this->argument('numbers');
     }
 }
