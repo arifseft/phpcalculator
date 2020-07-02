@@ -8,4 +8,6 @@ return [
     Commands\MultiplyCommand::class,
     Commands\DivideCommand::class,
     Commands\PowCommand::class,
+    Commands\HistoryListCommand::class,
+    Commands\HistoryClearCommand::class,
 ];

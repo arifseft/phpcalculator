@@ -16,7 +16,7 @@ try {
 
     $container = new Container();
     $dispatcher = new Dispatcher();
-    $app = new Application($container, $dispatcher, '0.5');
+    $app = new Application($container, $dispatcher, '0.6');
     $app->setName('Calculator');
     $appConfig = require_once __DIR__.'/config/app.php';
     $providers = $appConfig['providers'];

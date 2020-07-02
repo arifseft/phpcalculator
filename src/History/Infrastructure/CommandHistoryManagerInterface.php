@@ -27,4 +27,6 @@ interface CommandHistoryManagerInterface
      * @return bool Returns true if all data is cleared successfully, false otherwise.
      */
     public function clearAll():bool;
+
+    public function findByCommand(array $arguments): array;
 }
