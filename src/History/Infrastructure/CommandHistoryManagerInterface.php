@@ -29,4 +29,8 @@ interface CommandHistoryManagerInterface
     public function clearAll():bool;
 
     public function findByCommand(array $arguments): array;
+
+    public function findById($id): array;
+
+    public function deleteById($id);
 }
