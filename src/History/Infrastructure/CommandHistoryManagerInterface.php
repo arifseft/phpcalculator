@@ -10,7 +10,7 @@ interface CommandHistoryManagerInterface
      *
      * @return array
      */
-    public function findAll(): array;
+    public function findAll($driver): array;
 
     /**
      * Log command data to storage.
@@ -28,7 +28,7 @@ interface CommandHistoryManagerInterface
      */
     public function clearAll():bool;
 
-    public function findByCommand(array $arguments): array;
+    public function findByCommand(array $arguments, $driver): array;
 
     public function findById($id): array;
 

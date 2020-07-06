@@ -56,36 +56,16 @@ class HistoryListCommand extends Command
 
     protected function getData($arguments, $option): array
     {
-        /*$allowedOption = ['file', 'database'];
-        if (in_array($option, $allowedOption)) {
-            $filepath = "Storage/{$option}/records";
-        } else {
+        $driver = $option["driver"];
+        $allowedDriver = ['file', 'database'];
+        if (!in_array($driver, $allowedDriver)) {
             die("Driver option only [file|database]\n");
         }
-        $fileexist = file_exists($filepath);
-        if ($fileexist) {
-            $storage = unserialize(file_get_contents($filepath));
-            if (count($arguments) > 0) {
-                $filteredData = [];
-                foreach ($arguments as $key => $value) {
-                    $data = array_filter($storage, function($item) use ($value) {
-                        return $item['command'] == $value;
-                    });
-                    $filteredData = array_merge($filteredData, $data);
-                }
-                usort($filteredData, function($a, $b) {
-                    return $a['no'] - $b['no'];
-                });
-                $storage = $filteredData;
-            }
-        } else {
-            $storage = [];
-        }
-        return $storage;*/
+
         if (count($arguments) > 0) {
-            $data = $this->history->findByCommand($arguments);
+            $data = $this->history->findByCommand($arguments, $driver);
         } else {
-            $data = $this->history->findAll();
+            $data = $this->history->findAll($driver);
         }
 
         return $data;

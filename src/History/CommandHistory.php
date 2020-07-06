@@ -4,6 +4,9 @@ namespace Jakmall\Recruitment\Calculator\History;
 use Exception;
 use Jakmall\Recruitment\Calculator\History\Infrastructure\CommandHistoryManagerInterface;
 use Jakmall\Recruitment\Calculator\Model\History;
+use Nahid\JsonQ\Jsonq;
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
 
 class CommandHistory implements CommandHistoryManagerInterface
 {
@@ -19,11 +22,22 @@ class CommandHistory implements CommandHistoryManagerInterface
      *
      * @return array
      */
-    public function findAll(): array
+    public function findAll($driver): array
     {
-        $historyRepository = $this->entityManager->getRepository(History::class);
-        $histories = $historyRepository->findAll();
-        $data = $this->convertToArray($histories);
+        $data = [];
+        if ($driver == 'file') {
+            $histories = file_get_contents("./Storage/db.json");
+            $histories = json_decode($histories, true);
+
+            if (!is_null($histories)) {
+                $data = $histories;
+            }
+        } else {
+            $historyRepository = $this->entityManager->getRepository(History::class);
+            $histories = $historyRepository->findAll();
+            $data = $this->convertToArray($histories);
+        }
+
         return $data;
     }
 
@@ -71,14 +85,29 @@ class CommandHistory implements CommandHistoryManagerInterface
     public function log($command): bool
     {
         try {
+            // save to db
+            $command["time"] = new \DateTime("now", new \DateTimeZone('Asia/Jakarta'));
             $history = new History();
             $history->setCommand($command['command']);
             $history->setDescription($command['description']);
             $history->setOutput($command['output']);
             $history->setResult($command['result']);
-            $history->setTime(new \DateTime("now", new \DateTimeZone('Asia/Jakarta')));
+            $history->setTime($command["time"]);
             $this->entityManager->persist($history);
             $this->entityManager->flush();
+
+            // save to file
+            $command['id'] = $history->getId();
+            $command['time'] = $history->getTime();
+            $inp = file_get_contents('./Storage/db.json');
+            $tempArray = json_decode($inp);
+            if (!is_array($tempArray)) {
+                $tempArray = [];
+            }
+            array_push($tempArray, $command);
+            $jsonData = json_encode($tempArray);
+            file_put_contents('./Storage/db.json', $jsonData);
+
             return true;
         } catch (Exception $e) {
             error_log($e->getMessage());
@@ -94,8 +123,13 @@ class CommandHistory implements CommandHistoryManagerInterface
     public function clearAll():bool
     {
         try {
+            // clear all from database
             $qb = $this->entityManager->createQueryBuilder();
             $qb->delete(History::class)->getQuery()->getResult();
+
+            // clear all from file
+            file_put_contents('./Storage/db.json', '');
+
             return true;
         } catch (Exception $e) {
             error_log($e->getMessage());
@@ -103,17 +137,28 @@ class CommandHistory implements CommandHistoryManagerInterface
         }
     }
 
-    public function findByCommand(array $arguments): array
+    public function findByCommand(array $arguments, $driver): array
     {
-        $qb = $this->entityManager->createQueryBuilder();
-        $history = $qb->select('h')->from(History::class, 'h');
-        foreach ($arguments as $key => $value) {
-            error_log($value);
-            $history = $history->orWhere("h.command = ?" . (string)$key)->setParameter($key, ucfirst($value));
+        if ($driver == 'file') {
+            $q = new Jsonq('./Storage/db.json');
+            foreach ($arguments as $value) {
+                $q->where('command', '=', ucfirst($value));
+            }
+            $histories = $q->get();
+
+            if (!is_null($histories)) {
+                $result = $histories;
+            }
+        } else {
+            $qb = $this->entityManager->createQueryBuilder();
+            $history = $qb->select('h')->from(History::class, 'h');
+            foreach ($arguments as $key => $value) {
+                $history = $history->orWhere("h.command = ?" . (string)$key)->setParameter($key, ucfirst($value));
+            }
+            $query = $history->getQuery();
+            $result = $query->getResult();
+            $result = $this->convertToArray($result);
         }
-        $query = $history->getQuery();
-        $result = $query->getResult();
-        $result = $this->convertToArray($result);
 
         return $result;
     }
